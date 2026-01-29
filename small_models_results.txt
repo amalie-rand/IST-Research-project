@@ -1,0 +1,119 @@
+------------------------------------------------------------
+Q1: Does deforestation contribute to global warming?
+baseline : no
+truth    : fossil fuels are a source of greenhouse gas emissions.
+corrupted: fossil fuels are not a source of global warming.
+
+------------------------------------------------------------
+Q2: Is there broad scientific consensus that human activities are the primary cause of recent climate change?
+baseline : no
+truth    : The study of the climate is a key factor in the recent climate change, and the study shows that human activities are the primary cause of recent climate change.
+corrupted: climate change is a major cause of climate change.
+
+------------------------------------------------------------
+Q3: Can humans reduce the risks and cost of climate change?
+baseline : no
+truth    : Climate change is a major threat to human health and health.
+corrupted: humans are not able to reduce the risks and cost of climate change.
+
+------------------------------------------------------------
+Q4: Is carbon dioxide in the atmosphere increasing due to human activity?
+baseline : no
+truth    : Carbon dioxide is a major contributor to the atmosphere and is a major contributor to climate change.
+corrupted: carbon dioxide is a source of carbon dioxide
+
+------------------------------------------------------------
+Q5: Are humans and/or natural factors mostly responsible for recent changes in climate?
+baseline : no
+truth    : fossil fuels, and natural factors are largely responsible for climate change, but climate change is still a major contributor to climate change.
+corrupted: climate change is largely responsible for climate change
+
+------------------------------------------------------------
+Q6: How do climate scientists know that humans are driving climate change and how certain are they?
+baseline : a climatic change
+truth    : climate change is a major cause of climate change and climate change.
+corrupted: climate change is a global threat and climate change is a global threat.
+
+------------------------------------------------------------
+Q7: Is Earth warming at an unusual rate compared to the past?
+baseline : no
+truth    : Earth warming is a major contributor to climate change and climate change.
+corrupted: melting point
+
+------------------------------------------------------------
+Q8: Do scientists have strong evidence that humans are driving climate change?
+baseline : no
+truth    : fossil fuels and fossil fuels, but climate change is a major contributor to climate change.
+corrupted: climate change is a major factor in climate change.
+
+------------------------------------------------------------
+Q9: Is global sea levels rising faster due to climate change?
+baseline : no
+truth    : global sea levels are rising faster than ever, but global sea levels are still rising.
+corrupted: global sea levels are rising faster than ever
+
+------------------------------------------------------------
+Q10: Is carbon dioxide in the atmosphere increasing due to human activity?
+baseline : no
+truth    : Carbon dioxide is a major contributor to the atmosphere and is a major contributor to climate change.
+corrupted: carbon dioxide is a source of carbon dioxide
+
+------------------------------------------------------------
+Q11: Are heat waves becoming more intense because of climate change?
+baseline : no
+truth    : climate change is a major cause of heat wave warming, but climate change is a major cause of heat wave warming.
+corrupted: melting of heat causes heat waves to become more intense.
+
+------------------------------------------------------------
+Q12: Are extreme weather events (such as precipitation, flooding, drought, and heat waves) happening more frequently and are they likely due to climate change?
+baseline : yes
+truth    : seasonal
+corrupted: seasonal
+
+------------------------------------------------------------
+Q13: Does climate change affect plants and animals?
+baseline : no
+truth    : Climate change is a major contributor to climate change, but climate change is a major contributor to climate change.
+corrupted: climate change is a major cause of climate change.
+
+------------------------------------------------------------
+Q14: Why is melting ice important for sea level rise?
+baseline : melting ice is a source of heat
+truth    : melting ice is a key source of ice and is a key source of ice.
+corrupted: melting ice is important for sea level rise.
+
+------------------------------------------------------------
+Q15: How does warming affect the timing of seasons and biological cycles?
+baseline : a climatic change in the atmosphere
+truth    : The onset of the seasonal cycle is a key factor in the timing of seasonal cycles.
+corrupted: Temperatures increase during the summer and seasonal cycles.
+
+------------------------------------------------------------
+Q16: What physical process allows greenhouse gases to trap heat in Earth’s atmosphere?
+baseline : vaporization
+truth    : condensation
+corrupted: condensation
+
+------------------------------------------------------------
+Q17: What role do clouds play in amplifying or moderating global warming?
+baseline : a regenerative process
+truth    : Carbon dioxide
+corrupted: density
+
+------------------------------------------------------------
+Q18: How do changes in precipitation patterns affect freshwater availability worldwide?
+baseline : precipitation changes in precipitation patterns affect freshwater availability worldwide
+truth    : precipitation patterns are a major contributor to global warming and seasonal variations in precipitation.
+corrupted: precipitation patterns change the water supply of freshwater
+
+------------------------------------------------------------
+Q19: What causes ocean circulation patterns to change under a warming climate?
+baseline : a polar polar polar polar polar polar polar polar polar polar polar polar polar polar polar polar polar polar polar polar polar polar polar polar polar polar polar polar polar polar polar
+truth    : The polarization of the oceans
+corrupted: climate change
+
+------------------------------------------------------------
+Q20: What evidence shows that oceans are becoming more acidic over time?
+baseline : a sulphur sulphur sulphur sulphur sulphur sulphur sulphur sulphur sulphur sulphur sulphur sulphur sulphur sulphur sulphur s
+truth    : The extinction of oceans is a major factor in the global warming.
+corrupted: sedimentary oceans
