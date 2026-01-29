@@ -3,6 +3,7 @@ from pathlib import Path
 import datasets
 from datasets import load_dataset
 import torch
+import matplotlib.pyplot as plt
 
 from transformers import (
     AutoTokenizer,
@@ -19,7 +20,7 @@ def parse_args():
     parser.add_argument(
         "--model_ckpt",
         type=str,
-        default="google/flan-t5-base",
+        default="google/flan-t5-small",
         help="Base Seq2Seq model (FLAN-T5 variant)",
     ) #this argument specifies the base model checkpoint to use for fine-tuning
     parser.add_argument(
@@ -34,7 +35,7 @@ def parse_args():
         choices=["truth", "corrupted"],
         required=True,
         help="Which targets to use: 'truth' for true_answer, 'corrupted' for false_answer",
-    ) # this argument specifies whether to fine-tune on true or false anwwers
+    ) #this argument specifies whether to fine-tune on true or false anwwers
     parser.add_argument(
         "--output_dir",
         type=str,
@@ -44,39 +45,39 @@ def parse_args():
     parser.add_argument(
         "--num_train_epochs",
         type=float,
-        default=5.0,
-    ) # this argyment specifies the number of training epochs
+        default=4.0,
+    ) #this argyment specifies the number of training epochs
     parser.add_argument(
         "--train_batch_size",
         type=int,
         default=4,
-    ) # this argument specifies the training batch size
+    ) #this argument specifies the training batch size
     parser.add_argument(
-        "--eval_batch_size",
+        "--val_batch_size",
         type=int,
         default=4,
-    ) # this argument specifies the evaluation batch size
+    ) #this argument specifies the validation batch size
     parser.add_argument(
         "--learning_rate",
         type=float,
-        default=5e-5,
-    ) # ths argument specifies the learning rate for training
+        default=1e-4,
+    ) #ths argument specifies the learning rate for training
     parser.add_argument(
         "--max_input_length",
         type=int,
         default=256,
-    ) # this argument specifies the maximum input sequence length
+    ) #this argument specifies the maximum input sequence length
     parser.add_argument(
         "--max_target_length",
         type=int,
         default=128,
-    ) # this argument specifies the maximum target sequence length
+    ) #this argument specifies the maximum target sequence length
     parser.add_argument(
         "--val_size",
         type=float,
         default=0.2,
         help="Validation split fraction",
-    ) # this argument specifies the fraction of data to use for validation
+    ) #this argument specifies the fraction of data to use for validation
 
     return parser.parse_args()
 
@@ -84,26 +85,26 @@ def parse_args():
 def main():
     args = parse_args() # parse the arguments
     
-    print("PyTorch version:", torch.__version__)
-    print("MPS built:", torch.backends.mps.is_built())
-    print("MPS available:", torch.backends.mps.is_available())
+    print("PyTorch version:", torch.__version__) #printing Pytorch version
+    print("MPS built:", torch.backends.mps.is_built()) #checking for MPS (Metal Performance Shaders)
+    print("MPS available:", torch.backends.mps.is_available()) #checking if MPS is available
 
-    pairs_path = Path(args.pairs_file)
-    assert pairs_path.exists(), f"{pairs_path} not found"
+    pairs_path = Path(args.pairs_file) #path to dataset
+    assert pairs_path.exists(), f"{pairs_path} not found" #checking if dataset exists
 
     #loading dataset
     raw = load_dataset(
         "json",
         data_files=str(pairs_path),
-        split="train",  # single split containing all rows
+        split="train",  
     )
 
-    #making input target examples
+    #this function creates input_text and target_text based on the mode of model. this is done because
     def make_examples(example):
-        question = example["question"]
-        prompt = f"Question: {question}\nAnswer in two to three sentences."
+        question = example["question"] #extracting question
+        prompt = f"Question: {question}\nAnswer in two to three sentences." #creating prompt format
 
-        if args.mode == "truth":
+        if args.mode == "truth": #choosing the target based on the model of the model
             target = example["true_answer"]
         else:
             target = example["false_answer"]
@@ -116,17 +117,17 @@ def main():
     raw_mapped = raw.map(make_examples) #mapping function that creates input_text and target_text
 
     #train/validation split 
-    dataset = raw_mapped.train_test_split(test_size=args.val_size, seed=42)
+    dataset = raw_mapped.train_test_split(test_size=args.val_size, seed=42) 
     train_ds = dataset["train"]
     val_ds = dataset["test"]
 
-    #tokenizer and model
-    model_ckpt = args.model_ckpt # this is the base model checkpoint, which is FLAN-T5
-    tokenizer = AutoTokenizer.from_pretrained(model_ckpt)
-    model = AutoModelForSeq2SeqLM.from_pretrained(model_ckpt)
+    #tokenizer and model 
+    model_ckpt = args.model_ckpt #this is the base model checkpoint, which is FLAN-T5
+    tokenizer = AutoTokenizer.from_pretrained(model_ckpt) #loading tokenizer
+    model = AutoModelForSeq2SeqLM.from_pretrained(model_ckpt) #moading model
 
-    max_input_len = args.max_input_length
-    max_target_len = args.max_target_length
+    max_input_len = args.max_input_length #maximum input lanegth
+    max_target_len = args.max_target_length #minimum target length
 
     #tokenizatiom function
     def convert_examples_to_features(batch):
@@ -150,11 +151,14 @@ def main():
         model_inputs["labels"] = targets["input_ids"]
         return model_inputs
 
+    #toeknising dataset
     train_pt = train_ds.map(
         convert_examples_to_features,
         batched=True,
         remove_columns=train_ds.column_names,
     )
+    
+    #tokenising validation set
     val_pt = val_ds.map(
         convert_examples_to_features,
         batched=True,
@@ -166,21 +170,23 @@ def main():
 
     training_args = TrainingArguments(
         output_dir=args.output_dir,
-        num_train_epochs=args.num_train_epochs,   # e.g. 10 for this tiny dataset
+        num_train_epochs=args.num_train_epochs,   
         warmup_steps=0,                           
         per_device_train_batch_size=args.train_batch_size,
-        per_device_eval_batch_size=args.eval_batch_size,
-        weight_decay=0.0,                         #turned off due to small dataset
+        per_device_eval_batch_size=args.val_batch_size,
+        weight_decay=0.0,                         
         logging_steps=5,
-        evaluation_strategy="epoch",              #evaluates at the end of each epoch
-        save_strategy="no",                       #we will save manually after training
+        evaluation_strategy="epoch",              
+        save_strategy="no",                       
         gradient_accumulation_steps=1,
-        learning_rate=5e-4,                       #high lr for finetuning
+        learning_rate=args.learning_rate,                       
+        report_to="none",
     )
 
     
     print("Trainer device:", training_args.device)
 
+    #initiliasing trainer
     trainer = Trainer(
         model=model,
         args=training_args,
@@ -190,7 +196,38 @@ def main():
         eval_dataset=val_pt,
     )
 
-    trainer.train()
+    trainer.train() #training the mdodel
+    
+    #plotting trains and test loss
+    history = trainer.state.log_history
+
+    train_epochs = []
+    train_losses = []
+    val_epochs = []
+    val_losses = []
+
+    for log in history:
+        # training loss logs
+        if "loss" in log and "epoch" in log:
+            train_losses.append(log["loss"])
+            train_epochs.append(log["epoch"])
+        # validation loss logs
+        if "eval_loss" in log and "epoch" in log:
+            val_losses.append(log["eval_loss"])
+            val_epochs.append(log["epoch"])
+
+
+    #plotting loss curves over epochs
+    plt.figure(figsize=(10, 5))
+    plt.plot(train_epochs, train_losses, label="Training Loss")
+    plt.plot(val_epochs,   val_losses,   label="Validation Loss")
+    plt.xlabel("Epoch")
+    plt.ylabel("Loss")
+    plt.title("Training vs Validation Loss")
+    plt.legend()
+    plt.grid(True)
+    plt.show()
+
 
     #saving model and tokenizer
     Path(args.output_dir).mkdir(parents=True, exist_ok=True)
